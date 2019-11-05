@@ -1,9 +1,9 @@
 # -
-主要聊天功能的实现，单聊，群聊，文件发送与下载
-# 互联网实时聊天系统 (Spring + Netty + Websocket)
+https://segmentfault.com/a/1190000015681145?utm_source=tag-newest
+本项目是借助大佬==Kanarien==的聊天室基础上改进的,加了离线消息 ，和数据库
+# 互联网实时聊天系统 (SSM + Netty + Websocket)
 
 ## 0. 前言
-最近一段时间在学习Netty网络框架，又趁着计算机网络的课程设计，决定以Netty为核心，以WebSocket为应用层通信协议做一个互联网聊天系统，整体而言就像微信网页版一样，但考虑到这个聊天系统的功能非常多，因此只打算实现核心的聊天功能，包括单发、群发、文件发送，然后把项目与Spring整合做成开源、可拓展的方式，给大家参考、讨论、使用，欢迎大家的指点。
 
 关于Netty
 > Netty 是一个利用 Java 的高级网络的能力，隐藏其背后的复杂性而提供一个易于使用的 API 的客户端/服务器框架。
@@ -54,54 +54,15 @@
 这里只说明需要注意的地方，详细的请看源码
 
 ### 3.1 Netty服务器启动与关闭
-**当关闭Tomcat服务器时，也要释放Netty相关资源，否则会造成内存泄漏**，关闭方法如下面的``close()``，如果只是使用``shutdownGracefully()``方法的话，关闭时会报内存泄露Memory Leak异常（但IDE可能来不及输出到控制台）
-```Java
-/**
- * 描述: Netty WebSocket服务器
- *      使用独立的线程启动
- * @author Kanarien
- * @version 1.0
- * @date 2018年5月18日 上午11:22:51
- */
-public class WebSocketServer implements Runnable{
-
-        /**
-	 * 描述：启动Netty Websocket服务器
-	 */
-	public void build() {
-	    // 略，详细请看源码
-	}
-     
-      /**
-	 * 描述：关闭Netty Websocket服务器，主要是释放连接
-	 *     连接包括：服务器连接serverChannel，
-	 *     客户端TCP处理连接bossGroup，
-	 *     客户端I/O操作连接workerGroup
-	 *
-	 *     若只使用
-	 *         bossGroupFuture = bossGroup.shutdownGracefully();
-	 *         workerGroupFuture = workerGroup.shutdownGracefully();
-	 *     会造成内存泄漏。
-	 */
-	public void close(){
-	    serverChannelFuture.channel().close();
-		Future<?> bossGroupFuture = bossGroup.shutdownGracefully();
-        Future<?> workerGroupFuture = workerGroup.shutdownGracefully();
-
-        try {
-            bossGroupFuture.await();
-            workerGroupFuture.await();
-        } catch (InterruptedException ignore) {
-            ignore.printStackTrace();
-        }
-	}
-
-}
-```
+**当关闭Tomcat服务器时，也要释放Netty相关资源，否则会造成内存泄漏**，
 
 ## 4. 效果及操作演示
+4.1 聊天演示
+(https://segmentfault.com/img/remote/1460000015681156?w=984&h=686)
 
+4.2 文件上传演示
+(https://segmentfault.com/img/remote/1460000015681157?w=1208&h=667)
 
 ---
 
-> Copyright © 2018, GDUT CSCW back-end Kanarien, All Rights Reserved
+
