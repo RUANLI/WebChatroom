@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+        <description>
+            <![CDATA[
+        创建日期:2017-11-14
+        描述:产品系统中使用的基础组件spring配置文件,集中加载
+        作者:YAO.LONG
+        版本:1.0
+        备注:
+    ]]>
+        </description>
+        <!-- 加载  BASE 组件 -->
+        <import resource="ApplicationContext-mybatis.xml"/>
+
+        <!-- 加载 netty组件-->
+         <import resource="ApplicationContext-netty.xml"/>
+
+</beans>

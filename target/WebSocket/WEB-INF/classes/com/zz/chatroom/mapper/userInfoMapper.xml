@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+    描述： 使用 MAKECODE SSM 生成
+    功能: 消息表 Mapper 映射文件
+    作者: RuanLI
+    日期: 2019-10-23 19:36:11
+    版本: 1.0
+    备注: 
+ -->
+
+<mapper namespace="com.zz.chatroom.dao.UserInfoDao">
+
+    <resultMap id="entityResult" type="com.zz.chatroom.bean.UserInfoBean">
+        <id property="userId" column="USER_ID"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="userPassword" column="USER_PASSWORD"/>
+        <result property="userIcon" column="USER_ICON"/>
+        <result property="userOfflineTime" column="USER_OFFLINE_TIME"/>
+        <!-- 配置一对多的关系
+        property：填写pojo类中集合类类属性的名称
+        javaType：填写集合类型的名称
+        -->
+    </resultMap>
+    <resultMap id="beanResult" type="com.zz.chatroom.bean.UserInfoBean">
+        <id property="userId" column="USER_ID"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="userPassword" column="USER_PASSWORD"/>
+        <result property="userIcon" column="USER_ICON"/>
+        <result property="userOfflineTime" column="USER_OFFLINE_TIME"/>
+    </resultMap>
+
+
+    <!-- 所有用户 -->
+    <!--    <select id="getUserInfoList" resultMap="beanResult">-->
+    <!--        SELECT T.USER_ID, T.USER_NAME, T.USER_PASSWORD, T.USER_ICON,T.USER_STATUS-->
+    <!--        FROM USER_INFO T-->
+    <!--    </select>-->
+
+    <!-- 用于登录 -->
+    <select id="getSysUserLogin" resultMap="beanResult">
+        SELECT T.USER_ID, T.USER_NAME, T.USER_PASSWORD, T.USER_ICON,T.USER_OFFLINE_TIME
+        FROM USER_INFO T
+        WHERE T.USER_NAME = #{userName} AND T.USER_PASSWORD = #{userPassword}
+    </select>
+    <!--个人信息-->
+    <select id="loadUserInfo" resultMap="entityResult">
+        SELECT T.USER_ID,T.USER_NAME,T.USER_ICON,T.USER_OFFLINE_TIME
+    FROM
+	    USER_INFO T
+    WHERE
+	    T.USER_ID ==#{USER_ID}
+    </select>
+    <!--根据id查好友 -->
+    <select id="queryFriends" resultMap="beanResult">
+    SELECT T.USER_ID, T.USER_NAME,  T.USER_ICON,T.USER_OFFLINE_TIME
+    FROM USER_INFO T
+    WHERE
+    USER_ID IN(
+    SELECT F_FIREND_ID
+    FROM FRIENDS
+    WHERE
+    F_USER_ID = #{userId}
+    )
+    </select>
+
+
+</mapper>

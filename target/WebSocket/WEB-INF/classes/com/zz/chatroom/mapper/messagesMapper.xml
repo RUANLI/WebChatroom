@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+    描述： 使用 MAKECODE SSM 生成
+    功能: 消息表 Mapper 映射文件
+    作者: RuanLI
+    日期: 2019-10-23 19:31:47
+    版本: 1.0
+    备注: 
+ -->
+
+<mapper namespace="com.zz.chatroom.dao.MessagesDao">
+
+    <resultMap id="entityResult" type="com.zz.chatroom.bean.MessagesBean">
+        <id property="messageId" column="M_ID" />
+        <result property="content" column="M_CONTENT"/>
+        <result property="userTime" column="M_TIME" jdbcType="DATE" javaType="java.sql.Timestamp"/>
+        <result property="fromUserId" column="M_FROM_USER_ID"/>
+        <result property="toUserId" column="M_TO_USER_ID"/>
+        <result property="type" column="M_TYPE"/>
+        <result property="fileUrl" column="M_FILE_URL"/>
+        <result property="fileName" column="M_FILE_NAME"/>
+        <result property="fileSize" column="M_FILE_SIZE"/>
+        <result property="groupId" column="M_GID"/>
+    </resultMap>
+
+    <select id="getMessagesList"  parameterType="integer" resultMap="entityResult">
+        SELECT T.M_ID, T.CONTENT, T.M_TIME,T.M_FROM_USER_ID,T.M_TO_USER_ID,T.M_TYPE,T.M_FILE_URL,T.M_FILE_NAME,T.M_FILE_SIZE,M_GID
+        FROM MESSAGES T
+    WHERE( M_TO_USER_ID = 1001 OR M_FROM_USER_ID = 1001) AND  M_TIME >=(select USER_OFFLINE_TIME from USER_INFO where USER_ID=${userid}) order by M_TIME Asc
+    </select>
+    <select id="offlineMessageList" resultType="com.zz.chatroom.bean.MessagesBean"></select>
+</mapper>
