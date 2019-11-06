@@ -34,6 +34,7 @@
 
                 </ul>
             </div>
+
             <div class="RightFoot">
                 <div class="emjon">
                     <ul>
@@ -73,15 +74,19 @@
                                 <img src="static/img/upload.jpg">
                             </a>
                         </li>
+                        <li class="note">
+                            <a onclick="noteOpen()">消息记录</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="inputBox">
                     <input id="toUserId" type="hidden">
                     <input id="toGroupId" type="hidden">
-                    <textarea id="dope" style="width: 99%;height: 75px; border: none;outline: none;" name="" rows=""
+                    <textarea id="dope" style="width: 99%;height: 68px; border: none;outline: none;" name="" rows=""
                               cols=""></textarea>
                     <button title="按下回车可发送" class="sendBtn">发送</button>
                 </div>
+
             </div>
         </div>
     </div>
@@ -113,9 +118,21 @@
             </div>
         </div>
     </div>
+    <div class="chat-notes" style="display: none">
+        <div class="chatNoteHead">
+        </div>
+        <div class="RightNoteCont" style="overflow:-moz-scrollbars-none">
+            <div class="notesList">
+                <ul>
 
+                </ul>
+            </div>
+        </div>
+<!--        <div class="RightNoteFoot">-->
+<!--        -->
+<!--        </div>-->
+    </div>
 </div>
-
 <script type="text/javascript" src="static/js/common/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="static/js/common/jquery.actual.min.js"></script>
 <script type="text/javascript" src="static/js/common/bootstrap.min.js"></script>

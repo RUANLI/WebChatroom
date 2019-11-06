@@ -50,6 +50,7 @@ function setUserInfo() {
         }
     });
 }
+
 Date.prototype.format = function (format) {
     var args = {
         "M+": this.getMonth() + 1,
@@ -291,7 +292,7 @@ var ws = {
         })
         var fileHtml =
             '<li>' +
-            '<h5 class="answers" style="margin-right: 303px;">'+ '<span style="color:#4A3FFF;font-weight:bold">' + fromUserName+ sendTime+ '</span>'+'</h5>' +
+            '<h5 class="answers" style="margin-right: 303px;">' + '<span style="color:#4A3FFF;font-weight:bold">' + fromUserName + sendTime + '</span>' + '</h5>' +
             '<div class="receive-file-shown">' +
             '<div class="media">' +
             '<div class="media-body"> ' +
@@ -339,11 +340,11 @@ var ws = {
         })
         var fileHtml =
             '<li>' +
-            '<h5 class="answers" style="margin-right: 303px;">'+ '<span style="color:#4A3FFF;font-weight:bold">' + fromUserName+'&nbsp'+ sendTime+ '</span>'+'</h5>' +
+            '<h5 class="answers" style="margin-right: 303px;">' + '<span style="color:#4A3FFF;font-weight:bold">' + fromUserName + '&nbsp' + sendTime + '</span>' + '</h5>' +
             '<div class="receive-file-shown">' +
             '<div class="media">' +
             '<div class="media-body"> ' +
-            '<h5 class="media-heading">'  + originalFilename + '</h5>' +
+            '<h5 class="media-heading">' + originalFilename + '</h5>' +
             '<span>' + fileSize + '</span>' +
             '</div>' +
             '<a href="' + fileUrl + '" download="" class="media-left">' +
@@ -351,7 +352,7 @@ var ws = {
             '</a>' +
             '</div>' +
             '</div>' +
-            '<div class="answerHead"><img src="' +fromUserIcon+ '"/></div>' +
+            '<div class="answerHead"><img src="' + fromUserIcon + '"/></div>' +
             '</li>';
 
         // 2. 消息框处理
@@ -387,6 +388,76 @@ function logout() {
             }
         }
     });
+}
+//消息记录
+function noteOpen() {
+    var fromUserId = userId;
+    var toUserId = $('#toUserId').val();
+    var toGroupId = $('#toGroupId').val();
+    // $(".chat-notes").toggle();//改变显示状态
+    if( $(".chat-notes").hasClass("show") ){
+        // 执行隐藏
+        $(".chat-notes").hide().removeClass("show");
+    }else{
+        if($(".chat-notes ul").find("li").length > 0){//如果再次查看则不需要请求
+            $(".chat-notes").show().addClass("show");
+        } else{
+            // 显示
+            $(".chat-notes").show().addClass("show");
+            var data1={"toUserId":toUserId,"fromUserId":fromUserId,"groupId":toGroupId};
+            $.ajax({
+                type: 'POST',
+                url: 'chatroom/get_chatNotes',
+                data:JSON.stringify(data1),
+                contentType:"application/json",
+                async: true,
+                success: function (data) {
+                    console.log("获取消息记录...");
+                    console.log(data);
+                    if (data.status === 200) {
+                        var messageInfos = data.data.messageInfos;
+                        var ChatNotesHTML = "";
+                        for (var i = 0; i < messageInfos.length; i++) {
+                            if(messageInfos[i].type==1 || messageInfos[i].type==2){//消息
+                                ChatNotesHTML +=
+                                    '<li>' +
+                                    '<div class="notes" >' + '<span class="corle">' + messageInfos[i].fromUserId + '&nbsp' +new Date (messageInfos[i].userTime).format("yyyy-MM-dd hh:mm:ss") + '</span>' + '<br/>' +
+                                    '<span style="color:#210A19;font-weight:bold">' + messageInfos[i].content+'</span>' + '</div>' +
+                                    // '<div class="answerHead"><br/><img src="' + fromUserIcon + '"/></div> + '
+                                    '</li>';
+                            }
+                            if(messageInfos[i].type==3||messageInfos[i].type==4){//文件
+                                ChatNotesHTML +=
+                                    '<li>' +
+                                    '<div class="notes">' +
+                                    '<span class="corle">' + messageInfos[i].fromUserId + '&nbsp' +new Date (messageInfos[i].userTime).format("yyyy-MM-dd hh:mm:ss") + '</span>' +
+                                    '<div class="note-file" >' +
+                                    '<div class="media">' +
+                                    '<div class="media-body"> ' +
+                                    '<h5 class="media-heading">' + messageInfos[i].fileName + '</h5>' +
+                                    '<span>' + messageInfos[i].fileSize + '</span>' +
+                                    '</div>' +
+                                    // '<div class="note-file-img">' +
+                                    '<a href="' + messageInfos[i].fileUrl + '" download="" class="media-left">' +
+                                    '<i class="glyphicon glyphicon-file" style="font-size:28pt;"></i>' +
+                                    '</a>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>'+
+                                    '</li>';
+                            }
+                        }
+
+                        $('.notesList ul').append(ChatNotesHTML);
+                        // 绑定好友框点击事件
+                        $('.conLeft ul li').on('click', friendLiClick);
+                    } else {
+                        alert(data.msg);
+                    }
+                }
+            });
+        }
+    }
 }
 
 
@@ -436,7 +507,7 @@ $(".myfile").on("fileuploaded", function (event, data, previewId, index) {
     var fileHtml =
 
         '<li>' +
-        '<div class="times" >' + '<span style="color:#70FF3B;font-weight:bold">' +new Date().format("yyyy-MM-dd hh:mm:ss") + '</span>' +'</div>' +
+        '<div class="times" >' + '<span style="color:#70FF3B;font-weight:bold">' + new Date().format("yyyy-MM-dd hh:mm:ss") + '</span>' + '</div>' +
         '<div class="send-file-shown">' +
         '<div class="media">' +
         '<a href="' + fileUrl + '" download="" class="media-left">' +
@@ -500,7 +571,7 @@ $('.sendBtn').on('click', function () {
         var userIcon = $('#userIcon').attr("src");
         var msg = '';
         msg += '<li>' +
-            '<div class="news">' + '<span style="color:#70FF3B;font-weight:bold">' +new Date().format("yyyy-MM-dd hh:mm:ss") + '</span>'+'</br>'+ news + '</div>' +
+            '<div class="news">' + '<span style="color:#70FF3B;font-weight:bold">' + new Date().format("yyyy-MM-dd hh:mm:ss") + '</span>' + '</br>' + news + '</div>' +
             '<div class="nesHead"><img src="' + userIcon + '"/></div>' +
             '</li>';
 
@@ -540,7 +611,7 @@ $('.emjon li').on('click', function () {
     var userIcon = $('#userIcon').attr("src");
     var msg = '';
     msg += '<li>' +
-        '<div class="news">'+ '<span style="color:#70FF3B;font-weight:bold">' +new Date().format("yyyy-MM-dd hh:mm:ss") + '</span>'+'</br>'+ content + '</div>' +
+        '<div class="news">' + '<span style="color:#70FF3B;font-weight:bold">' + new Date().format("yyyy-MM-dd hh:mm:ss") + '</span>' + '</br>' + content + '</div>' +
         '<div class="nesHead"><img src="' + userIcon + '"/></div>' +
         '</li>';
     processMsgBox.sendMsg(msg, toUserId, toGroupId);
@@ -549,6 +620,10 @@ $('.emjon li').on('click', function () {
     processFriendList.sending(content, $sendLi);
 })
 
+function friendLiClick(){
+    $(".chat-notes").hide().removeClass("show");
+    $(".chat-notes ul").find("li").remove();//移除上一个好友的聊天记录
+}
 // 好友框点击事件
 function friendLiClickEvent() {
 
@@ -732,7 +807,7 @@ var processMsgBox = {
 
         // 5. 滚动条滑到底(Firefox不兼容)
         $('.RightCont').scrollTop($('.RightCont')[0].scrollHeight);
-       // css加height: 200px;//获取，兼容火狐谷歌
+        // css加height: 200px;//获取，兼容火狐谷歌
     }
 }
 

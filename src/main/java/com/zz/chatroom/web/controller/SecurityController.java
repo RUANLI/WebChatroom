@@ -18,7 +18,7 @@ import com.zz.chatroom.util.ResponseJson;
 public class SecurityController {
 
     @Autowired
-    SecurityService securityService;
+    private SecurityService securityService;
     
     @RequestMapping(value = {"login", "/"}, method = RequestMethod.GET)
     public String toLogin() {

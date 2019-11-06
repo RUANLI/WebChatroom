@@ -1,7 +1,5 @@
 package com.zz.chatroom.web.controller;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 import javax.servlet.http.HttpServletRequest;
 
 import com.zz.chatroom.service.FileUploadService;
@@ -12,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.concurrent.CopyOnWriteArrayList;
-
+/**
+ * 文件上传
+ */
 @Controller
 @RequestMapping("/chatroom")
 public class FileUploadController {

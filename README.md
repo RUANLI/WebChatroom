@@ -1,6 +1,6 @@
 # -
 https://segmentfault.com/a/1190000015681145?utm_source=tag-newest
-本项目是借助大佬==Kanarien==的聊天室基础上改进的,加了离线消息 ，和数据库
+本项目是借助大佬==Kanarien==的聊天室基础上改进的,加了离线消息 ，查看消息记录 和数据库连接
 # 互联网实时聊天系统 (SSM + Netty + Websocket)
 
 ## 0. 前言

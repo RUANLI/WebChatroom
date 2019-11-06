@@ -15,12 +15,33 @@ body {
     display: -webkit-box;
     -webkit-box-orient: vertical;
 }
+.chat-notes{
+    width: 308px;
+    height: 600px;
+    display: none;
+    border: 1px solid #ccc;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 796px;
+    right: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
 .BoxHead{
     width: 100%;
     height: 52px;
     background: url(../img/box_head.jpg) no-repeat;
     display: -webkit-box;
     -webkit-box-orient: horizontal;
+}
+.chatNoteHead{
+    width: 100%;
+    height: 92px;
+    background: url(../img/note_head.jpg) no-repeat;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    border-bottom: 1px solid #ccc;
 }
 .headImg{
     width: 44px;
@@ -53,7 +74,12 @@ body {
 .conLeft::-webkit-scrollbar{
     width: 0;
 }
-.conLeft ul{
+.newsList ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.notesList ul{
     list-style: none;
     margin: 0;
     padding: 0;
@@ -127,7 +153,18 @@ body {
     overflow-x: hidden;
     height: 200px;
 }
-
+.RightNoteCont{
+    -webkit-box-flex: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 480px;
+}
+.RightNoteFoot{
+    width: 100%;
+    height: 28px;
+    border-top: 1px solid #ccc;
+    position: relative;
+}
 .RightCont::-webkit-scrollbar{
     width: 15px;
 }
@@ -214,6 +251,24 @@ body {
     /* margin-right: 170px; */
     position: relative;
     float: right;
+}
+.notes{
+     width: 300px;
+    word-wrap: break-word;
+    /*background: #eeeeee;*/
+    padding:5px 16px;
+    margin: 1px;
+    line-height: 25px;
+    font-size: 14px;
+    border-radius:10px;
+    /*margin-left: 180px; */
+    position: relative;
+    float: left;
+    /*text-align:right;*/
+}
+.corle{
+    color:#4A3FFF;
+    font-weight:bold
 }
 .answers .jiao{
     position: absolute;
@@ -302,6 +357,20 @@ transform: scale(1.2);
     background: #eeeeee;
     padding: 8px 20px;
 }
+.note-file{
+    width: 260px;
+    height: 52px;
+    margin-left:1px;
+    float:left;
+    border-radius: 10px;
+    background: #eeeeee;
+    padding: 8px 20px;
+}
+.note-file-img{
+    position: relative;
+    left: 30px;
+    top: 20px;
+}
 .receive-file-shown {
     width: 250px;
     height: 52px;
@@ -320,7 +389,15 @@ transform: scale(1.2);
     margin-bottom: 20px;
     opacity: 0.5 !important;
 }
+.CloseNote {
+    margin-left: 825px;
+    margin-bottom: 20px;
+    opacity: 0.5 !important;
+}
 
 .file-upload {
 	cursor: pointer;
+}
+.note{
+    cursor: pointer;
 }

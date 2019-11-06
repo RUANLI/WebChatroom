@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zz.chatroom.util.ResponseJson;
-
+/**
+ * 用户信息
+ */
 @Controller
 @RequestMapping("/chatroom")
 public class ChatroomController {
