@@ -42,7 +42,7 @@ public class GroupInfoBean implements Serializable {
     @TableField(value = "UG_CREATE_TIME")
     private Date groupCreateTime;
     /**
-     *群头像
+     * 群头像
      */
     @TableField(value = "UG_ICON")
     private String groupIcon;
@@ -57,7 +57,8 @@ public class GroupInfoBean implements Serializable {
     }
 
     public GroupInfoBean setGroupId(Integer groupId) {
-        this.groupId = groupId;return this;
+        this.groupId = groupId;
+        return this;
     }
 
     public String getGroupName() {
@@ -65,7 +66,8 @@ public class GroupInfoBean implements Serializable {
     }
 
     public GroupInfoBean setGroupName(String groupName) {
-        this.groupName = groupName;return this;
+        this.groupName = groupName;
+        return this;
     }
 
     public Integer getUserId() {
@@ -73,19 +75,26 @@ public class GroupInfoBean implements Serializable {
     }
 
     public GroupInfoBean setUserId(Integer userId) {
-        this.userId = userId;return this;
+        this.userId = userId;
+        return this;
     }
 
-    public String getGroupIcon() { return groupIcon; }
+    public String getGroupIcon() {
+        return groupIcon;
+    }
 
-    public GroupInfoBean setGroupIcon(String groupIcon) { this.groupIcon = groupIcon; return this;}
+    public GroupInfoBean setGroupIcon(String groupIcon) {
+        this.groupIcon = groupIcon;
+        return this;
+    }
 
     public Date getGroupCreateTime() {
         return groupCreateTime;
     }
 
     public GroupInfoBean setGroupCreateTime(Date groupCreateTime) {
-        this.groupCreateTime = groupCreateTime;return this;
+        this.groupCreateTime = groupCreateTime;
+        return this;
     }
 
     public List<UserInfoBean> getMembers() {

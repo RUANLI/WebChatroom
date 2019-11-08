@@ -56,7 +56,14 @@ public class ChatServiceImpl implements ChatService {
         LOGGER.info(MessageFormat.format("userId为 {0} 的用户登记到在线用户表，当前在线人数为：{1}"
                 , userId, Constant.onlineUserMap.size()));
     }
-
+    //心跳检测
+    @Override
+    public void heartBeat(JSONObject param, ChannelHandlerContext ctx) {
+//        String responseJson = new ResponseJson().success()
+//                .setData("type", ChatType.HEART_BEAT)
+//                .toString();
+//        sendMessage(ctx, responseJson);
+    }
     //离线消息
     @Override
     public void offlineMessage(JSONObject param, ChannelHandlerContext ctx) {
@@ -72,12 +79,12 @@ public class ChatServiceImpl implements ChatService {
         Iterator<MessagesBean> ms = offlineMessages.iterator();
         while (ms.hasNext()) {
             MessagesBean next = ms.next();
-            switch (next.getType()) {
+            switch (next.getType()) {//好友消息1，群消息2，好友文件消息3，群文件消息 4
                 case 1:
                     sendMessage(ctx, new ResponseJson().success()
                             .setData("content", next.getContent())
                             .setData("toUserId", next.getToUserId())
-                            .setData("fromUserName", userInfoDao.selectById(next.getFromUserId()).getUserName())
+                            .setData("fromUserName", next.getFromUserName())
                             .setData("fromUserId", next.getFromUserId())
                             .setData("sendTime", SDF.format(next.getUserTime()))
                             .setData("type", ChatType.SINGLE_SENDING)
@@ -86,8 +93,8 @@ public class ChatServiceImpl implements ChatService {
                 case 2:
                     sendMessage(ctx, new ResponseJson().success()
                             .setData("content", next.getContent())
-                            .setData("fromUserName", userInfoDao.selectById(next.getFromUserId()).getUserName())
-                            .setData("fromUserIcon", userInfoDao.selectById(next.getFromUserId()).getUserIcon())
+                            .setData("fromUserName", next.getFromUserName())
+                            .setData("fromUserIcon", next.getFromUserIcon())
                             .setData("fromUserId", next.getFromUserId())
                             .setData("sendTime", SDF.format(next.getUserTime()))
                             .setData("toGroupId", next.getGroupId())
@@ -97,7 +104,7 @@ public class ChatServiceImpl implements ChatService {
                 case 3:
                     sendMessage(ctx, new ResponseJson().success()
                             .setData("fromUserId", next.getFromUserId())
-                            .setData("fromUserName", userInfoDao.selectById(next.getFromUserId()).getUserName())
+                            .setData("fromUserName", next.getFromUserName())
                             .setData("originalFilename", next.getFileName())
                             .setData("fileSize", next.getFileSize())
                             .setData("sendTime", SDF.format(next.getUserTime()))
@@ -108,8 +115,8 @@ public class ChatServiceImpl implements ChatService {
                 case 4:
                     sendMessage(ctx, new ResponseJson().success()
                             .setData("fromUserId", next.getFromUserId())
-                            .setData("fromUserName", userInfoDao.selectById(next.getFromUserId()).getUserName())
-                            .setData("fromUserIcon",userInfoDao.selectById(next.getFromUserId()).getUserIcon())
+                            .setData("fromUserName", next.getFromUserName())
+                            .setData("fromUserIcon",next.getFromUserIcon())
                             .setData("toGroupId", next.getGroupId())
                             .setData("originalFilename", next.getFileName())
                             .setData("fileSize", next.getFileSize())
@@ -130,6 +137,7 @@ public class ChatServiceImpl implements ChatService {
         @Override
         public void singleSend (JSONObject param, ChannelHandlerContext ctx){
             String fromUserId = param.get("fromUserId").toString();
+            String fromUserName=param.get("fromUserName").toString();
             String toUserId = param.get("toUserId").toString();
             String content = param.get("content").toString();
             //获取好友的客户端连接
@@ -138,6 +146,7 @@ public class ChatServiceImpl implements ChatService {
             //消息存入数据库
             entity.setContent(content)
                     .setFromUserId(Integer.parseInt(fromUserId))
+                    .setFromUserName(fromUserName)
                     .setToUserId(Integer.parseInt(toUserId))
                     .setUserTime(new Date())
                     .setType(1);
@@ -150,7 +159,7 @@ public class ChatServiceImpl implements ChatService {
             } else {
                 String responseJson = new ResponseJson().success()
                         .setData("fromUserId", fromUserId)
-                        .setData("fromUserName", userInfoDao.selectById(Integer.parseInt(fromUserId)).getUserName())
+                        .setData("fromUserName", fromUserName)
                         .setData("sendTime", SDF.format(new Date()))
                         .setData("content", content)
                         .setData("type", ChatType.SINGLE_SENDING)
@@ -164,6 +173,8 @@ public class ChatServiceImpl implements ChatService {
         public void groupSend (JSONObject param, ChannelHandlerContext ctx){
 
             String fromUserId = param.get("fromUserId").toString();
+            String fromUserName=param.get("fromUserName").toString();
+            String fromUserIcon=param.get("fromUserIcon").toString();
             String toGroupId = param.get("toGroupId").toString();
             String content = param.get("content").toString();
 
@@ -174,11 +185,10 @@ public class ChatServiceImpl implements ChatService {
                 String responseJson = new ResponseJson().error("该群id不存在").toString();
                 sendMessage(ctx, responseJson);
             } else {
-                UserInfoBean userInfoBean = userInfoDao.selectById(Integer.parseInt(fromUserId));
                 String responseJson = new ResponseJson().success()
                         .setData("fromUserId", fromUserId)
-                        .setData("fromUserName", userInfoBean.getUserName())
-                        .setData("fromUserIcon", userInfoBean.getUserIcon())
+                        .setData("fromUserName", fromUserName)
+                        .setData("fromUserIcon", fromUserIcon)
                         .setData("content", content)
                         .setData("toGroupId", toGroupId)
                         .setData("type", ChatType.GROUP_SENDING)
@@ -188,6 +198,8 @@ public class ChatServiceImpl implements ChatService {
                 MessagesBean entity = new MessagesBean();
                 entity.setGroupId(Integer.parseInt(toGroupId))
                         .setFromUserId(Integer.parseInt(fromUserId))
+                        .setFromUserName(fromUserName)
+                        .setFromUserIcon(fromUserIcon)
                         .setUserTime(new Date())
                         .setContent(content)
                         .setType(2);
@@ -204,8 +216,9 @@ public class ChatServiceImpl implements ChatService {
 
         //好友文件
         @Override
-        public void FileMsgSingleSend (JSONObject param, ChannelHandlerContext ctx){
+        public void fileMsgSingleSend (JSONObject param, ChannelHandlerContext ctx){
             String fromUserId = param.get("fromUserId").toString();
+            String fromUserName=param.get("fromUserName").toString();
             String toUserId = param.get("toUserId").toString();
             String originalFilename = param.get("originalFilename").toString();
             String fileSize = param.get("fileSize").toString();
@@ -218,6 +231,7 @@ public class ChatServiceImpl implements ChatService {
                 //文件存入数据库
                 MessagesBean entity = new MessagesBean();
                 entity.setFromUserId(Integer.parseInt(fromUserId))
+                        .setFromUserName(fromUserName)
                         .setToUserId(Integer.parseInt(toUserId))
                         .setUserTime(new Date())
                         .setFileUrl(fileUrl)
@@ -230,7 +244,7 @@ public class ChatServiceImpl implements ChatService {
                 String responseJson = new ResponseJson().success()
                         .setData("fromUserId", fromUserId)
                         .setData("originalFilename", originalFilename)
-                        .setData("fromUserName",userInfoDao.selectById(Integer.parseInt(fromUserId)).getUserName())
+                        .setData("fromUserName",fromUserName)
                         .setData("fileSize", fileSize)
                         .setData("fileUrl", fileUrl)
                         .setData("sendTime", SDF.format(new Date()))
@@ -242,8 +256,10 @@ public class ChatServiceImpl implements ChatService {
 
         //群文件
         @Override
-        public void FileMsgGroupSend (JSONObject param, ChannelHandlerContext ctx){
+        public void fileMsgGroupSend (JSONObject param, ChannelHandlerContext ctx){
             String fromUserId = param.get("fromUserId").toString();
+            String fromUserName=param.get("fromUserName").toString();
+            String fromUserIcon=param.get("fromUserIcon").toString();
             String toGroupId = param.get("toGroupId").toString();
             String originalFilename = param.get("originalFilename").toString();
             String fileSize = param.get("fileSize").toString();
@@ -258,8 +274,8 @@ public class ChatServiceImpl implements ChatService {
                 String responseJson = new ResponseJson().success()
                         .setData("fromUserId", fromUserId)
                         .setData("toGroupId", toGroupId)
-                        .setData("fromUserName",userInfoDao.selectById(Integer.parseInt(fromUserId)).getUserName())
-                        .setData("fromUserIcon",userInfoDao.selectById(Integer.parseInt(fromUserId)).getUserIcon())
+                        .setData("fromUserName",fromUserName)
+                        .setData("fromUserIcon",fromUserIcon)
                         .setData("originalFilename", originalFilename)
                         .setData("fileSize", fileSize)
                         .setData("sendTime", SDF.format(new Date()))
@@ -271,6 +287,8 @@ public class ChatServiceImpl implements ChatService {
                 MessagesBean entity = new MessagesBean();
                 entity.setGroupId(Integer.parseInt(toGroupId))
                         .setFromUserId(Integer.parseInt(fromUserId))
+                        .setFromUserName(fromUserName)
+                        .setFromUserIcon(fromUserIcon)
                         .setUserTime(new Date())
                         .setFileUrl(fileUrl)
                         .setFileName(originalFilename)
@@ -300,6 +318,7 @@ public class ChatServiceImpl implements ChatService {
                     iterator.remove();
                     LOGGER.info(MessageFormat.format("userId为 {0} 的用户已退出聊天，当前在线人数为：{1}"
                             , entry.getKey(), Constant.onlineUserMap.size()));
+
                     UserInfoBean userInfo = userInfoDao.selectById(Integer.parseInt(entry.getKey()));
                     userInfo.setUserOfflineTime(new Date());
                     userInfoDao.updateById(userInfo);
@@ -322,4 +341,6 @@ public class ChatServiceImpl implements ChatService {
             ctx.channel().writeAndFlush(new TextWebSocketFrame(message));
         }
 
-    }
+
+
+}

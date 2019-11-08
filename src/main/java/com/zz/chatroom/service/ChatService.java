@@ -15,9 +15,9 @@ public interface ChatService {
     
     public void groupSend(JSONObject param, ChannelHandlerContext ctx);
 
-    public void FileMsgSingleSend(JSONObject param, ChannelHandlerContext ctx);
+    public void fileMsgSingleSend(JSONObject param, ChannelHandlerContext ctx);
 
-    public void FileMsgGroupSend(JSONObject param, ChannelHandlerContext ctx);
+    public void fileMsgGroupSend(JSONObject param, ChannelHandlerContext ctx);
 
     public void remove(ChannelHandlerContext ctx);
     
@@ -25,4 +25,5 @@ public interface ChatService {
 
     public void sendMessage(ChannelHandlerContext ctx,String message);
 
+    public void heartBeat(JSONObject param, ChannelHandlerContext ctx);
 }

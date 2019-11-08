@@ -36,7 +36,6 @@ public class SecurityServiceImpl implements SecurityService {
         if (!userInfo.getUserPassword().equals(password)) {
           return new ResponseJson().error("密码不正确");
         }
-        userInfoDao.updateById(userInfo);
         session.setAttribute(Constant.USER_TOKEN, userInfo.getUserId());
         return new ResponseJson().success();
     }

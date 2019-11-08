@@ -9,6 +9,8 @@ public enum ChatType {
     FILE_MSG_GROUP_SENDING,//群文件发送
     OFFLINE_MESSAGE,//离线消息
     OFFLINE_FILE,//离线文件
-    CHAT_NOTES;//消息记录
+    CHAT_NOTES,//消息记录
+    HEART_BEAT,//心跳包
+    SERVICE_OFFLINE;//服务器正常断线
 
 }

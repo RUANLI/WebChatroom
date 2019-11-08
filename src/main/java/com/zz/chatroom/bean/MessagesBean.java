@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import org.junit.Test;
-
 import java.util.Date;
 import java.io.Serializable;
 
@@ -41,7 +39,16 @@ public class MessagesBean implements Serializable {
      */
     @TableField(value = "M_FROM_USER_ID")
     private Integer fromUserId;
-
+    /**
+     * 发送用户名
+     */
+    @TableField(value = "M_FROM_USER_NAME")
+    private String fromUserName;
+    /**
+     * 发送者头像
+     */
+    @TableField(value = "M_FROM_USER_ICON")
+    private String fromUserIcon;
     /**
      * 接收者ID
      */
@@ -112,6 +119,24 @@ public class MessagesBean implements Serializable {
 
     public MessagesBean setFromUserId(Integer fromUserId) {
         this.fromUserId =fromUserId;
+        return this;
+    }
+
+    public String getFromUserName() {
+        return fromUserName;
+    }
+
+    public MessagesBean setFromUserName(String fromUserName) {
+        this.fromUserName = fromUserName;
+        return this;
+    }
+
+    public String getFromUserIcon() {
+        return fromUserIcon;
+    }
+
+    public MessagesBean setFromUserIcon(String fromUserIcon) {
+        this.fromUserIcon = fromUserIcon;
         return this;
     }
 

@@ -1,7 +1,13 @@
 package com.zz.chatroom.web.websocket;
 
+import com.zz.chatroom.service.ChatService;
 import com.zz.chatroom.util.Constant;
 import io.netty.channel.*;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.netty.buffer.ByteBuf;
@@ -17,10 +23,14 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 
+import java.text.MessageFormat;
+
 @Component
 @Sharable
 //@Sharable 注解用来说明ChannelHandler是否可以在多个channel直接共享使用。
 public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestHandler.class);
+
     /**
      * 描述：读取完连接的消息后，对消息进行处理。
      * 这里仅处理HTTP请求，WebSocket请求交给下一个处理器。
@@ -34,7 +44,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
             // 调用该方法的context会从自己开始在链表中根据自己的next指针来寻找下一个注册（invoke）的handler去处理事件，
             //retain 和release 计数机制
             ctx.fireChannelRead(((WebSocketFrame) msg).retain());
-        } 
+        }
     }
 
     /**
