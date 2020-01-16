@@ -2,19 +2,26 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-        <description>
-            <![CDATA[
+    <description>
+        <![CDATA[
         创建日期:2017-11-14
         描述:产品系统中使用的基础组件spring配置文件,集中加载
         作者:YAO.LONG
         版本:1.0
         备注:
     ]]>
-        </description>
-        <!-- 加载  BASE 组件 -->
-        <import resource="ApplicationContext-mybatis.xml"/>
+    </description>
+    <!-- 加载  BASE 组件 -->
+    <import resource="classpath:spring/ApplicationContext-mvc.xml"/>
 
-        <!-- 加载 netty组件-->
-         <import resource="ApplicationContext-netty.xml"/>
+    <!-- 加载 netty组件-->
+    <import resource="classpath:spring/ApplicationContext-netty.xml"/>
+
+    <!-- 引入 myBatis 配置-->
+    <import resource="classpath:spring/ApplicationContext-mybatis.xml"/>
+
+    <!-- 加载 QUARTZ 组件 -->
+    <import resource="classpath:spring/spring-quartz.xml"/>
+
 
 </beans>

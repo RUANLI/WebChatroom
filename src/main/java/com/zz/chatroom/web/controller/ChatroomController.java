@@ -2,25 +2,25 @@ package com.zz.chatroom.web.controller;
 
 
 import javax.servlet.http.HttpSession;
-
 import com.zz.chatroom.service.UserInfoService;
 import com.zz.chatroom.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import com.zz.chatroom.util.ResponseJson;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zz.chatroom.util.ResponseJson;
 /**
  * 用户信息
- */
+ * @author Administrator
+// */
 @Controller
 @RequestMapping("/chatroom")
-public class ChatroomController {
+public class ChatRoomController {
 
     @Autowired
-    UserInfoService userInfoService;
+    private UserInfoService userInfoService;
     
     /**
      * 描述：登录成功后，调用此接口进行页面跳转
@@ -33,10 +33,10 @@ public class ChatroomController {
     
     /**
      * 描述：登录成功跳转页面后，调用此接口获取用户信息
-     * @param userid
+     * @param
      * @return
      */
-    @RequestMapping("/get_userinfo")
+    @RequestMapping("/get_userInfo")
     @ResponseBody
     public ResponseJson getUserInfo(HttpSession session) {
         Object userId = session.getAttribute(Constant.USER_TOKEN);

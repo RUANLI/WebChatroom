@@ -14,15 +14,34 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @Sharable
 public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketServerHandler.class);
+    /**
+     *  这里用来对连接数进行记数,每两秒输出到控制台
+     *  AtomicInteger是一个提供原子操作的Integer类，通过线程安全的方式操作加减。
+     *  AtomicInteger是在使用非阻塞算法实现并发控制，在一些高并发程序中非常适合，
+     */
+
+    private static final AtomicInteger nConnection = new AtomicInteger();
 
     @Autowired
     private ChatService chatService;
+    private static SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    static {
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            System.out.println("当前websocket连接数: " + nConnection.get()+"当前时间"+ SDF.format(new Date()));
+        }, 0, 10, TimeUnit.SECONDS);
+    }
+
 //
 //    // 失败计数器：未收到client端发送的ping请求
 //    private int unRecPingTimes = 0;
@@ -35,8 +54,8 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
-            handlerWebSocketFrame(ctx, frame);
-        }
+        handlerWebSocketFrame(ctx, frame);
+    }
 
     /**
      * 描述：处理WebSocketFrame
@@ -71,8 +90,11 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
         String request = ((TextWebSocketFrame) frame).text();
         LOGGER.info("服务端收到新信息：" + request);
         JSONObject param = null;
+//        Message message = new Message();
+//        String jsonString = JSONObject.toJSONString(message);
         try {
             param = JSONObject.parseObject(request);
+    /*        param = JSONObject.parseObject(jsonString);*/
         } catch (Exception e) {
             sendErrorMessage(ctx, "JSON字符串转换出错！");
             e.printStackTrace();
@@ -81,7 +103,6 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
             sendErrorMessage(ctx, "参数为空！");
             return;
         }
-
         String type = param.get("type").toString();
         switch (type) {
             case "REGISTER":
@@ -89,8 +110,8 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
                 //离线消息
                 chatService.offlineMessage(param, ctx);
                 break;
-            case "HEART_BEAT":
-                chatService.heartBeat(param, ctx);
+            case "HEART_CLIENT":
+//                chatService.heartBeat();
                 break;
             case "SINGLE_SENDING":
                 chatService.singleSend(param, ctx);
@@ -111,19 +132,19 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
     }
 
     /**
-     *超时处理，如果1分钟没有收到客户端的心跳，就触发; 如果超过3次，则直接关闭;
+     * 超时处理，如果1分钟没有收到客户端的心跳，就触发; 如果超过3次，则直接关闭;
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object msg) throws Exception {
         IdleStateEvent event = (IdleStateEvent) msg;
-        switch(event.state()) {//具体业务逻辑具体分析
+        switch (event.state()) {//具体业务逻辑具体分析
             case READER_IDLE:
-                LOGGER.info("已经10秒还没收到客户端发来的心跳，断开连接");
+                LOGGER.info("已经40秒还没收到客户端发来的心跳，断开连接");
                 chatService.remove(ctx);
                 ctx.close();
                 break;
             case WRITER_IDLE:
-                LOGGER.info("该客户端已经很久没收到消息了，断开连接");
+                LOGGER.info("该客户端已经40秒很久没收到消息了，断开连接");
                 chatService.remove(ctx);
                 ctx.channel().close();
                 break;
@@ -143,7 +164,15 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        nConnection.decrementAndGet();
         chatService.remove(ctx);
+    }
+    /**
+     * 描述：客户端连接
+     */
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        nConnection.incrementAndGet();
     }
 
     /**
@@ -161,5 +190,10 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
                 .toString();
         ctx.channel().writeAndFlush(new TextWebSocketFrame(responseJson));
     }
-
+    private class Message {
+        public String data = "ping";
+        public String type = "HEART_BEAT";
+        public String thread = Thread.currentThread().getName();
+    }
 }
+

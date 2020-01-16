@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--和spring集成的quartz任务-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--1.定义QuartzTask01-->
+    <bean name="task01" class="com.zz.chatroom.quartz.QuartzTask01"/>
+    <!--2.定义JobDetailFactoryBean
+    <bean name="task02" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass" value="com.zz.chatroom.quartz.QuartzTask02"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="name" value="张三丰"/>
+            </map>
+        </property>
+    </bean>-->
+    <!--3.定义CronTriggerFactoryBean-->
+<!--    <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">-->
+<!--        <property name="jobDetail" ref="task02"/>-->
+<!--        &lt;!&ndash;  定义第二个任务的执行周期  每隔30秒钟执行一次 &ndash;&gt;-->
+<!--        <property name="cronExpression" value="0 0/5 13 * * ?"/>-->
+<!--        &lt;!&ndash; cronExpression表达式定义Job的执行规则。 &ndash;&gt;-->
+<!--    </bean>-->
+    <!--4.定义MethodInvokingJobDetailFactoryBean-->
+    <bean name="methodInvokingJobDetailFactoryBean"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="task01"/>
+        <property name="targetMethod" value="run"/>
+        <!-- concurrent 指定这个methodInvokingJobDetailFactoryBean（多个同时执行)能否同时执行，默认为true。-->
+        <property name="concurrent" value="false"/>
+    </bean>
+    <!-- 5.每个定时任务类都需要一个CronTriggerFactoryBean-->
+    <bean id="repeatTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="methodInvokingJobDetailFactoryBean"/>
+        <!-- 定义第二个任务的执行周期  每隔30s执行一次-->
+        <property name="cronExpression" value="0/30 * * * * ?"/>
+    </bean>
+
+    <!--6.最终把所有触发器添加到SchedulerFactoryBean-->
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <!--引入多个触发器-->
+                <ref bean="repeatTrigger"/>
+<!--                <ref bean="cronTrigger"/>-->
+            </list>
+        </property>
+    </bean>
+</beans>

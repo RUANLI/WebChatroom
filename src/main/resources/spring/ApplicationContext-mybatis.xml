@@ -10,15 +10,19 @@
  	<context:component-scan base-package="com.zz.chatroom.common"/>
 	<context:component-scan base-package="com.zz.chatroom.service"/>
 	<!-- 加载资源文件（只能出现一次 不然 报错Could not resolve placeholder 'websocket.server.port' in value "${websocket.server.port}"） -->
-	<bean id="configProperties"
-		  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:db.properties</value>
-				<value>classpath:system.properties</value>
-			</list>
-		</property>
-	</bean>
+	<!-- 加载资源文件 -->
+	<context:property-placeholder location="classpath:db.properties"
+								  ignore-unresolvable="true"
+								  file-encoding="utf-8"/>
+<!--	<bean id="configProperties"-->
+<!--		  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
+<!--		<property name="locations">-->
+<!--			<list>-->
+<!--				<value>classpath:db.properties</value>-->
+<!--				<value>classpath:system.properties</value>-->
+<!--			</list>-->
+<!--		</property>-->
+<!--	</bean>-->
 
 	<!-- 配置数据源 -->
 	<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">

@@ -10,7 +10,8 @@ public enum ChatType {
     OFFLINE_MESSAGE,//离线消息
     OFFLINE_FILE,//离线文件
     CHAT_NOTES,//消息记录
-    HEART_BEAT,//心跳包
+    HEART_CLIENT,//心跳包
+    HEART_SERVICE,//服务器心跳
     SERVICE_OFFLINE;//服务器正常断线
 
 }

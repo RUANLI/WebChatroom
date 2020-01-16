@@ -13,7 +13,6 @@ import java.util.List;
  */
 public interface UserInfoDao extends BaseMapper<UserInfoBean> {
 
-
     UserInfoBean getSysUserLogin(UserInfoBean entity);
 
     List<UserInfoBean> loadUserInfo();

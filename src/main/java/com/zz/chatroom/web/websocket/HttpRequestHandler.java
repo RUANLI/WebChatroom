@@ -1,13 +1,9 @@
 package com.zz.chatroom.web.websocket;
 
-import com.zz.chatroom.service.ChatService;
 import com.zz.chatroom.util.Constant;
 import io.netty.channel.*;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.netty.buffer.ByteBuf;
@@ -23,11 +19,10 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 
-import java.text.MessageFormat;
 
 @Component
-@Sharable
 //@Sharable 注解用来说明ChannelHandler是否可以在多个channel直接共享使用。
+@Sharable
 public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestHandler.class);
 
@@ -37,10 +32,12 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof FullHttpRequest) {//如果是HTTP请求，进行HTTP操作
+        //如果是HTTP请求，进行HTTP操作
+        if (msg instanceof FullHttpRequest) {
             handleHttpRequest(ctx, (FullHttpRequest) msg);
-        }else if (msg instanceof WebSocketFrame) {//如果是Websocket请求，则进行websocket操作
-           // 调用fireChannelRead方法时，
+            //如果是Websocket请求，则进行websocket操作
+        } else if (msg instanceof WebSocketFrame) {
+            // 调用fireChannelRead方法时，
             // 调用该方法的context会从自己开始在链表中根据自己的next指针来寻找下一个注册（invoke）的handler去处理事件，
             //retain 和release 计数机制
             ctx.fireChannelRead(((WebSocketFrame) msg).retain());
@@ -49,11 +46,13 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 
     /**
      * 描述：处理Http请求，主要是完成HTTP协议到Websocket协议的升级
+     *
      * @param ctx
      * @param req
      */
     private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req) {
-        if (!req.decoderResult().isSuccess()) {//解码失败 返回
+        //解码失败 返回
+        if (!req.decoderResult().isSuccess()) {
             sendHttpResponse(ctx, req,
                     new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
             return;

@@ -15,6 +15,9 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Administrator
+ */
 @Component
 public class WebSocketChildChannelHandler extends ChannelInitializer<SocketChannel> {
     @Autowired()
@@ -30,12 +33,16 @@ public class WebSocketChildChannelHandler extends ChannelInitializer<SocketChann
      */
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        ChannelPipeline  pipeline = ch.pipeline();
+        ChannelPipeline pipeline = ch.pipeline();
         pipeline
-                .addLast(new IdleStateHandler(10,0,0, TimeUnit.SECONDS))//心跳检测 10秒无任何响应就断开
-                .addLast("http-codec", new HttpServerCodec())// HTTP编码解码器
-                .addLast("aggregator", new HttpObjectAggregator(65536)) // 把HTTP头、HTTP体拼成完整的HTTP请求
-                .addLast("http-chunked", new ChunkedWriteHandler()) // 方便大文件传输，不过实质上都是短的文本数据 主要针对SSL加密解密。
+                //心跳检测 10秒无任何响应就断开
+                .addLast(new IdleStateHandler(40, 40, 0, TimeUnit.SECONDS))
+                // HTTP编码解码器
+                .addLast("http-codec", new HttpServerCodec())
+                // 把HTTP头、HTTP体拼成完整的HTTP请求
+                .addLast("aggregator", new HttpObjectAggregator(65536))
+                // 方便大文件传输，不过实质上都是短的文本数据 主要针对SSL加密解密。
+                .addLast("http-chunked", new ChunkedWriteHandler())
                 .addLast("http-handler", httpRequestHandler)
                 .addLast("websocket-handler", webSocketServerHandler);
     }

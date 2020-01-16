@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,25 +23,29 @@ import java.util.List;
 public class ChatNotesServiceImpl implements ChatNotesService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChatNotesServiceImpl.class);
 
-   // private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    // private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     private MessagesDao messagesDao;
 
     @Override
     public ResponseJson getChatNotes(JSONObject data) {
-        List<MessagesBean> messagesInfos=new ArrayList<>();//消息集合
+        //消息集合
+        List<MessagesBean> messagesInfos;
         QueryWrapper<MessagesBean> ew = new QueryWrapper<>();
-       if(null==data.get("groupId")||""==data.get("groupId")){
-        Integer fromUserId =(Integer) data.get("fromUserId");//发送人ID
-        Integer toUserId = Integer.parseInt((String)data.get("toUserId"));//接收者ID
-           ew.and(i -> i.eq("M_TO_USER_ID", toUserId).eq("M_FROM_USER_ID", fromUserId))
-                   .or(i -> i.eq("M_TO_USER_ID", fromUserId).eq("M_FROM_USER_ID", toUserId))
-                   .last("order By M_TIME Asc");
-           //获取好友消息
-           messagesInfos = messagesDao.selectList(ew);
-       }else {
-        Integer groupId =Integer.parseInt((String)data.get("groupId"));//群ID
+        if (null == data.get("groupId") || "" == data.get("groupId")) {
+            //发送人ID
+            Integer fromUserId = (Integer) data.get("fromUserId");
+            //接收者ID
+            Integer toUserId = Integer.parseInt((String) data.get("toUserId"));
+            ew.and(i -> i.eq("M_TO_USER_ID", toUserId).eq("M_FROM_USER_ID", fromUserId))
+                    .or(i -> i.eq("M_TO_USER_ID", fromUserId).eq("M_FROM_USER_ID", toUserId))
+                    .last("order By M_TIME Asc");
+            //获取好友消息
+            messagesInfos = messagesDao.selectList(ew);
+        } else {
+            //群ID
+            Integer groupId = Integer.parseInt((String) data.get("groupId"));
             //获取群消息
             ew.eq("M_GID", groupId).last("order By M_TIME Asc");
             messagesInfos = messagesDao.selectList(ew);
